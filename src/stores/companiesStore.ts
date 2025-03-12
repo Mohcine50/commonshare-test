@@ -52,7 +52,7 @@ export const useCompaniesStore = defineStore('companies', () => {
         try {
             const records = await companiesTable.select().all();
 
-            allCompanies.value = records.map((record) => ({
+            const companies : Company[] = records.map((record) => ({
                 id: record.id,
                 name: record.get('name') || '',
                 description: record.get('description') || '',
@@ -74,7 +74,8 @@ export const useCompaniesStore = defineStore('companies', () => {
                 tags: record.get('tags') || [],
                 date_added_to_directory: record.get('date_added_to_directory') || new Date().toISOString(),
                 last_updated: record.get('last_updated') || new Date().toISOString(),
-            }));
+            })) as Company[];
+            allCompanies.value =companies
 
             extractFilterOptions();
             applyFilters(); // Apply initial filters after fetching data
