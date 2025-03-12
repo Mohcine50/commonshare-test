@@ -1,6 +1,7 @@
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import {defineStore} from 'pinia';
+import {computed, ref} from 'vue';
 import Airtable from 'airtable';
+import {type Company, type Filter, GeographicalScope, LegalStructure, OrganizationType, Size} from "../types";
 
 const AIRTABLE_API_KEY = import.meta.env.VITE_AIRTABLE_API_KEY;
 const AIRTABLE_TABLE_NAME = 'companies';
@@ -11,16 +12,18 @@ const ITEMS_PER_PAGE = 10;
 const  base = new Airtable({apiKey: AIRTABLE_API_KEY}).base('appWiGqR6setB1i7d');
 const companiesTable = base(AIRTABLE_TABLE_NAME)
 
+
+
 export const useCompaniesStore = defineStore('companies', () => {
     // State
-    const allCompanies = ref([]);
-    const filteredCompanies = ref([]);
-    const displayCompanies = ref([]);
-    const isLoading = ref(false);
-    const hasError = ref(false);
-    const errorMessage = ref('');
-    const searchQuery = ref('');
-    const filters = ref({
+    const allCompanies = ref<Company[]>([]);
+    const filteredCompanies = ref<Company[]>([]);
+    const displayCompanies = ref<Company[]>([]);
+    const isLoading = ref<boolean>(false);
+    const hasError = ref<boolean>(false);
+    const errorMessage = ref<string>('');
+    const searchQuery = ref<string>('');
+    const filters = ref<Filter>({
         organizationType:[],
         industry: [],
         size: [],
@@ -28,7 +31,7 @@ export const useCompaniesStore = defineStore('companies', () => {
         foundedYear: [],
     });
 
-    const filterOptions = ref({
+    const filterOptions = ref<Filter>({
         organizationType: [],
         industry: [],
         size: [],
@@ -40,6 +43,9 @@ export const useCompaniesStore = defineStore('companies', () => {
     const totalPages = computed(() => Math.ceil(filteredCompanies.value.length / ITEMS_PER_PAGE));
     const totalRecords = computed(() => filteredCompanies.value.length);
 
+
+
+
     const fetchAllCompanies = async () => {
         isLoading.value = true;
         hasError.value = false;
@@ -49,20 +55,29 @@ export const useCompaniesStore = defineStore('companies', () => {
 
             const records = await companiesTable.select().all()
 
-            allCompanies.value = records.map(record => ({
+            allCompanies.value = records.map( record => ({
                 id: record.id,
                 name: record.get('name') || '',
+                description: record.get('description') || '',
+                type_of_organization: record.get('type_of_organization') as OrganizationType || OrganizationType.Other,
                 industry: record.get('industry') || '',
-                ownership_structure: record.get('ownership_structure'),
-                size: record.get('size') || '',
-                legal_structure: record.get('legal_structure') || '',
-                founded: record.get('year_founded') || '',
-                number_of_owners_members: record.get('number_of_owners_members') || '',
-                tags: record.get('tags') || '',
-                organization_type: record.get('type_of_organization') || '',
+                ownership_structure: record.get('ownership_structure') || [],
+                legal_structure: record.get('legal_structure') as LegalStructure || LegalStructure.Other,
+                year_founded: record.get('year_founded') || 0,
+                headquarters_location: record.get('headquarters_location') || "",
+                geographical_scope: record.get('geographical_scope') as GeographicalScope || GeographicalScope.Global,
+                size: record.get('size') as Size || Size.Medium,
+                number_of_owners_members: record.get('number_of_owners_members') || 0,
+                funding_financial_information: record.get('funding_financial_information') || "",
+                token_information: record.get('contact_information') || "",
                 governance_model: record.get('governance_model') || '',
-                geographical_scope: record.get('geographical_scope') || '',
-            }));
+                links_social_media: record.get('links_social_media') || "",
+                contact_information: record.get('contact_information') || "",
+                certifications_affiliations: record.get('certifications_affiliations') || [],
+                tags: record.get('tags') || [],
+                date_added_to_directory: record.get('date_added_to_directory') || new Date().toISOString(),
+                last_updated: record.get('last_updated') || new Date().toISOString(),
+            }))
 
             extractFilterOptions();
 
@@ -79,6 +94,10 @@ export const useCompaniesStore = defineStore('companies', () => {
         }
     };
 
+
+
+
+
     const extractFilterOptions = () => {
         const options = {
             industry: new Set(),
@@ -92,16 +111,16 @@ export const useCompaniesStore = defineStore('companies', () => {
             if (company.industry) options.industry.add(company.industry);
             if (company.size) options.size.add(company.size);
             if (company.geographical_scope) options.geographicalScope.add(company.geographical_scope);
-            if (company.founded) options.foundedYear.add(company.founded);
-            if (company.organization_type) options.organizationType.add(company.organization_type);
+            if (company.year_founded) options.foundedYear.add(company.year_founded);
+            if (company.type_of_organization) options.organizationType.add(company.type_of_organization);
         });
 
         filterOptions.value = {
-            industry: Array.from(options.industry).sort(),
-            size: Array.from(options.size).sort(),
-            geographicalScope: Array.from(options.geographicalScope).sort(),
-            foundedYear: Array.from(options.foundedYear).sort(),
-            organizationType: Array.from(options.organizationType).sort()
+            industry: Array.from(options.industry).sort() as string[],
+            size: Array.from(options.size).sort() as string[],
+            geographicalScope: Array.from(options.geographicalScope).sort() as string[],
+            foundedYear: Array.from(options.foundedYear).sort() as number[],
+            organizationType: Array.from(options.organizationType).sort() as string[]
         };
     };
 
@@ -125,10 +144,10 @@ export const useCompaniesStore = defineStore('companies', () => {
                 filters.value.geographicalScope.includes(company.geographical_scope);
 
             const matchesFoundedYear = filters.value.foundedYear.length === 0 ||
-                filters.value.foundedYear.includes(company.founded);
+                filters.value.foundedYear.includes(company.year_founded);
 
             const organizationType = filters.value.organizationType.length === 0 ||
-                filters.value.organizationType.includes(company.organization_type);
+                filters.value.organizationType.includes(company.type_of_organization);
 
             return matchesIndustry && matchesSize && matchesGeographicalScope && matchesFoundedYear && organizationType;
         });
@@ -173,7 +192,7 @@ export const useCompaniesStore = defineStore('companies', () => {
         }
     };
 
-    const goToPage = (page) => {
+    const goToPage = (page: number) => {
         if (page >= 1 && page <= totalPages.value && page !== currentPage.value) {
             currentPage.value = page;
             updateDisplayedCompanies();
