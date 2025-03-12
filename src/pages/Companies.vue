@@ -105,7 +105,7 @@
 
     <!-- Companies Table -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-      <div class="bg-white overflow-hidden shadow-sm sm:rounded-b-lg">
+      <div class="bg-white overflow-hidden shadow-sm sm:rounded-b-lg mt-8">
         <div class="overflow-x-auto">
           <div class="overflow-hidden">
             <table class="w-full divide-y divide-gray-200 table-fixed">
