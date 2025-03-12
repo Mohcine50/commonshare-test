@@ -107,70 +107,72 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-b-lg">
         <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-            <tr>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Company
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Industry
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Size
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Governance Model
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Founded
-              </th>
-              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-            <tr v-for="company in store.displayCompanies" :key="company.id">
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                    {{ company.name.charAt(0) }}
+          <div class="overflow-hidden">
+            <table class="w-full divide-y divide-gray-200 table-fixed">
+              <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="w-1/6 px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Company
+                </th>
+                <th scope="col" class="w-1/6 px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Industry
+                </th>
+                <th scope="col" class="w-1/12 px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Size
+                </th>
+                <th scope="col" class="w-1/6 px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Governance Model
+                </th>
+                <th scope="col" class="w-1/12 px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Founded
+                </th>
+                <th scope="col" class="w-1/12 px-2 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+              <tr v-for="company in store.displayCompanies" :key="company.id">
+                <td class="px-2 py-4">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-xs">
+                      {{ company.name.charAt(0) }}
+                    </div>
+                    <div class="ml-2">
+                      <div class="text-sm font-medium text-gray-900 truncate max-w-xs">{{ company.name }}</div>
+                    </div>
                   </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">{{ company.name }}</div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ company.industry }}</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ company.size }}</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ company.governance_model }}</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ company.year_founded }}</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button @click="viewCompany(company)" class="text-blue-600 hover:text-blue-900 mr-3">View</button>
-              </td>
-            </tr>
-            <!-- Empty state when no results match -->
-            <tr v-if="store.isLoading">
-              <td colspan="6" class="px-6 py-10 text-center text-gray-500">
-                Loading...
-              </td>
-            </tr>
-            <tr v-if="store.displayCompanies.length === 0 && !store.isLoading">
-              <td colspan="6" class="px-6 py-10 text-center text-gray-500">
-                No companies found matching your criteria. Try adjusting your filters.
-              </td>
-            </tr>
-            </tbody>
-          </table>
+                </td>
+                <td class="px-2 py-4">
+                  <div class="text-sm text-gray-900 truncate">{{ company.industry }}</div>
+                </td>
+                <td class="px-2 py-4">
+                  <div class="text-sm text-gray-900 truncate">{{ company.size }}</div>
+                </td>
+                <td class="px-2 py-4">
+                  <div class="text-sm text-gray-900 truncate">{{ company.governance_model }}</div>
+                </td>
+                <td class="px-2 py-4">
+                  <div class="text-sm text-gray-900 truncate">{{ company.year_founded }}</div>
+                </td>
+                <td class="px-2 py-4 text-right text-sm font-medium">
+                  <button @click="viewCompany(company)" class="text-blue-600 hover:text-blue-900 cursor-pointer">View</button>
+                </td>
+              </tr>
+              <!-- Empty state when no results match -->
+              <tr v-if="store.isLoading">
+                <td colspan="6" class="px-2 py-10 text-center text-gray-500">
+                  Loading...
+                </td>
+              </tr>
+              <tr v-if="store.displayCompanies.length === 0 && !store.isLoading">
+                <td colspan="6" class="px-2 py-10 text-center text-gray-500">
+                  No companies found matching your criteria. Try adjusting your filters.
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Pagination -->

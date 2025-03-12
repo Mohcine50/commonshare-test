@@ -19,7 +19,7 @@
                 <div class="ml-3 h-7 flex items-center">
                   <button
                       @click="closePanel"
-                      class="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      class="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none cursor-pointer"
                   >
                     <span class="sr-only">Close panel</span>
                     <svg
