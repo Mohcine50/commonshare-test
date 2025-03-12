@@ -1,11 +1,10 @@
 <template>
   <div class="companies-page">
-    <!-- Blue header with white search input -->
     <div class="bg-blue-600 py-8 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-7xl mx-auto">
+      <div class="max-w-7xl mx-auto flex justify-center items-center flex-col">
         <h1 class="text-3xl font-bold text-white mb-6">Companies Directory</h1>
-        <div class="relative rounded-md shadow-sm max-w-2xl">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <div class="relative rounded-md shadow-sm max-w-2xl w-full">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ">
             <svg
                 class="h-5 w-5 text-gray-400"
                 xmlns="http://www.w3.org/2000/svg"
@@ -33,7 +32,7 @@
 
     <!-- Filters section -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 bg-white shadow-md -mt-4 rounded-t-lg">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <!-- Industry Filter -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">Industry</label>
@@ -97,15 +96,9 @@
       <div class="flex justify-end mt-4">
         <button
             @click="store.resetFilters"
-            class="mr-2 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+            class="mr-2 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer"
         >
           Reset Filters
-        </button>
-        <button
-            @click="store.applyFilters"
-            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-        >
-          Apply Filters
         </button>
       </div>
     </div>
@@ -127,7 +120,7 @@
                 Size
               </th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Location
+                Governance Model
               </th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Founded
@@ -146,7 +139,6 @@
                   </div>
                   <div class="ml-4">
                     <div class="text-sm font-medium text-gray-900">{{ company.name }}</div>
-                    <div class="text-sm text-gray-500">{{ company.website }}</div>
                   </div>
                 </div>
               </td>
@@ -157,14 +149,13 @@
                 <div class="text-sm text-gray-900">{{ company.size }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ company.location }}</div>
+                <div class="text-sm text-gray-900">{{ company.governance_model }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ company.founded }}</div>
+                <div class="text-sm text-gray-900">{{ company.year_founded }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <button @click="viewCompany(company)" class="text-blue-600 hover:text-blue-900 mr-3">View</button>
-                <a href="#" class="text-blue-600 hover:text-blue-900">Contact</a>
               </td>
             </tr>
             <!-- Empty state when no results match -->
@@ -183,9 +174,9 @@
             <div>
               <p class="text-sm text-gray-700">
                 Showing
-                <span class="font-medium">{{ (store.currentPage - 1) * ITEMS_PER_PAGE + 1 }}</span>
+                <span class="font-medium">{{ (store.currentPage - 1) * 10 + 1 }}</span>
                 to
-                <span class="font-medium">{{ Math.min(store.currentPage * ITEMS_PER_PAGE, store.totalRecords) }}</span>
+                <span class="font-medium">{{ Math.min(store.currentPage * 10, store.totalRecords) }}</span>
                 of
                 <span class="font-medium">{{ store.totalRecords }}</span>
                 results
@@ -253,7 +244,6 @@
       </div>
     </div>
 
-    <!-- Company Detail Panel -->
     <CompanyDetailPanel
         :selectedCompany="selectedCompany"
         @close="closePanel"
@@ -266,6 +256,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useCompaniesStore } from '../stores/companiesStore';
 import CompanyDetailPanel from '../components/CompanyDetailPanel.vue';
 import DropDownSelect from '../components/DropDownSelect.vue';
+import type {Company} from "../types";
 
 const store = useCompaniesStore();
 
@@ -295,10 +286,10 @@ const displayedPages = computed(() => {
 });
 
 // Detail panel state
-const selectedCompany = ref(null);
+const selectedCompany = ref<Company | null>(null);
 
 // View company details
-const viewCompany = (company) => {
+const viewCompany = (company: Company) => {
   selectedCompany.value = company;
 };
 

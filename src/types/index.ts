@@ -4,7 +4,7 @@ organizationType:string[];
     industry:   string [];
     size: string[];
     geographicalScope: string[];
-    foundedYear: number[];
+    foundedYear: string[];
 }
 
 

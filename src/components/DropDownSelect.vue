@@ -1,11 +1,11 @@
 <template>
-  <div class="relative">
+  <div class="relative" ref="dropdownRef">
     <button
         @click="toggleDropdown"
         class="flex items-center justify-between w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-white"
     >
       <span class="truncate">
-        {{ selectedLabels.length ? `${selectedLabels.length} selected` : placeholder }}
+        {{ selectedValues.length ? `${selectedValues.length} selected` : placeholder }}
       </span>
       <svg
           class="w-5 h-5 ml-2 -mr-1 text-gray-400"
@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed, watch, onMounted, onBeforeUnmount} from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 
 const props = defineProps({
   options: {
@@ -74,30 +74,40 @@ const emit = defineEmits(['update:modelValue']);
 
 const isOpen = ref(false);
 const selectedValues = ref([...props.modelValue]);
-
-const selectedLabels = computed(() => {
-  return selectedValues.value;
-});
+const isInternalChange = ref(false);
+const dropdownRef = ref<HTMLElement | null>(null);
 
 const toggleDropdown = () => {
   isOpen.value = !isOpen.value;
 };
 
-const closeDropdownOnClickOutside = (e: MouseEvent) => {
-  if (isOpen.value && !e.target.closest('.relative')) {
+const handleClickOutside = (event: MouseEvent) => {
+  if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node) && isOpen.value) {
     isOpen.value = false;
   }
 };
 
 onMounted(() => {
-  document.addEventListener('click', closeDropdownOnClickOutside);
+  document.addEventListener('click', handleClickOutside);
 });
 
 onBeforeUnmount(() => {
-  document.removeEventListener('click', closeDropdownOnClickOutside);
+  document.removeEventListener('click', handleClickOutside);
 });
 
+// Watch for internal changes to selectedValues
 watch(selectedValues, (newValues) => {
-  emit('update:modelValue', newValues);
+  if (!isInternalChange.value) {
+    emit('update:modelValue', newValues);
+  }
+  isInternalChange.value = false;
 });
+
+// Watch for external changes to modelValue prop
+watch(() => props.modelValue, (newValue) => {
+  if (JSON.stringify(newValue) !== JSON.stringify(selectedValues.value)) {
+    isInternalChange.value = true;
+    selectedValues.value = [...newValue];
+  }
+}, { deep: true });
 </script>
