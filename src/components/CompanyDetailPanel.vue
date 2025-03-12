@@ -51,6 +51,14 @@
                     <h3 class="text-lg font-medium text-gray-900">{{ selectedCompany.name }}</h3>
                   </div>
                 </div>
+
+                <div class="flex items-center ml-4 gap-3">
+                    <a v-if="links?.website" class="text-sm font-semibold">Website</a>
+                  <a v-if="links?.linkedin" class="text-sm font-semibold">Linkedin</a>
+                  <a v-if="links?.discord" class="text-sm font-semibold">Discord</a>
+                  <a v-if="links?.twitter" class="text-sm font-semibold">Twitter</a>
+                  <a v-if="links?.github" class="text-sm font-semibold">Github</a>
+                </div>
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -79,20 +87,6 @@
                   }}                </p>
               </div>
 
-              <div class="mb-6">
-                <h4 class="text-base font-medium text-gray-900 mb-3">Key Products & Services</h4>
-                <ul class="list-disc pl-5 text-gray-600">
-                  <li>Product/Service 1</li>
-                  <li>Product/Service 2</li>
-                  <li>Product/Service 3</li>
-                </ul>
-              </div>
-
-              <div class="pt-4 border-t border-gray-200">
-                <button class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
-                  Contact Company
-                </button>
-              </div>
             </div>
           </div>
         </div>
@@ -103,7 +97,8 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
-import type {Company} from "../types";
+import type {Company, LinksSocialMedia} from "../types";
+import {getLinkedRecord} from "../services/Airtable.ts";
 
 const props = defineProps({
   selectedCompany: {
@@ -115,6 +110,7 @@ const props = defineProps({
 const emit = defineEmits(['close']);
 
 const isPanelOpen = ref(false);
+const links = ref<LinksSocialMedia | null>(null)
 
 watch(
     () => props.selectedCompany,
@@ -139,7 +135,13 @@ const closePanel = () => {
   }, 300);
 };
 
-onMounted(() => {
+
+onMounted(async () => {
   isPanelOpen.value = false;
+  console.log(props.selectedCompany)
+
+  if(props.selectedCompany && props.selectedCompany.links_social_media){
+    links.value = await getLinkedRecord("links_social_media", props.selectedCompany.links_social_media) as LinksSocialMedia;
+  }
 });
 </script>

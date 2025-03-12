@@ -1,14 +1,9 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import Airtable from 'airtable';
 import { type Company, type Filter, GeographicalScope, LegalStructure, OrganizationType, Size } from '../types';
+import {getAllCompanies} from "../services/Airtable.ts";
 
-const AIRTABLE_API_KEY = import.meta.env.VITE_AIRTABLE_API_KEY;
-const AIRTABLE_TABLE_NAME = 'companies';
 const ITEMS_PER_PAGE = 10;
-
-const base = new Airtable({ apiKey: AIRTABLE_API_KEY }).base('appWiGqR6setB1i7d');
-const companiesTable = base(AIRTABLE_TABLE_NAME);
 
 export const useCompaniesStore = defineStore('companies', () => {
     // State
@@ -50,7 +45,7 @@ export const useCompaniesStore = defineStore('companies', () => {
         errorMessage.value = '';
 
         try {
-            const records = await companiesTable.select().all();
+            const records = await getAllCompanies();
 
             const companies : Company[] = records.map((record) => ({
                 id: record.id,
