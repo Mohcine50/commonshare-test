@@ -159,7 +159,12 @@
               </td>
             </tr>
             <!-- Empty state when no results match -->
-            <tr v-if="store.displayCompanies.length === 0">
+            <tr v-if="store.isLoading">
+              <td colspan="6" class="px-6 py-10 text-center text-gray-500">
+                Loading...
+              </td>
+            </tr>
+            <tr v-if="store.displayCompanies.length === 0 && !store.isLoading">
               <td colspan="6" class="px-6 py-10 text-center text-gray-500">
                 No companies found matching your criteria. Try adjusting your filters.
               </td>
